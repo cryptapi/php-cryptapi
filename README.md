@@ -25,7 +25,7 @@ git clone https://github.com/cryptapi/php-cryptapi
 
 ```php
 <?php
-require ('cryptapi.php');
+use CryptAPI\CryptAPI;
 
 $ca = new Cryptapi($coin, $my_address, $callback_url, $parameters, $pending);
 $payment_address = $ca->get_address();
@@ -52,7 +52,7 @@ The URL you provided earlier will be called when a user pays, for easier process
 
 ```php
 <?php
-require ('cryptapi.php');
+use CryptAPI\CryptAPI;
 
 $payment_data = Cryptapi::process_callback($_GET, $convert);
 ```
@@ -94,7 +94,7 @@ From here you just need to check if the value matches your order's value.
 
 ```php
 <?php
-require ('cryptapi.php');
+use CryptAPI\CryptAPI;
 
 $ca = new Cryptapi($coin, $my_address, $callback_url, $parameters);
 $data = $ca->check_logs();
