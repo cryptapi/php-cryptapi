@@ -14,10 +14,11 @@ ext-curl
 
 
 ```
-git clone https://github.com/cryptapi/php-cryptapi
+composer require cryptapi/php-cryptapi
 ```
 
-[on GitHub](https://github.com/cryptapi/php-cryptapi)
+[on GitHub](https://github.com/cryptapi/php-cryptapi) &emsp;
+[on Composer](https://packagist.org/packages/cryptapi/php-cryptapi)
 
 ## Usage
 
@@ -25,6 +26,8 @@ git clone https://github.com/cryptapi/php-cryptapi
 
 ```php
 <?php
+require 'vendor/autoload.php'; // Where your vendor directory is
+
 use CryptAPI\CryptAPI;
 
 $ca = new Cryptapi($coin, $my_address, $callback_url, $parameters, $pending);
@@ -52,6 +55,9 @@ The URL you provided earlier will be called when a user pays, for easier process
 
 ```php
 <?php
+
+require 'vendor/autoload.php'; // Where your vendor directory is
+
 use CryptAPI\CryptAPI;
 
 $payment_data = Cryptapi::process_callback($_GET, $convert);
@@ -94,6 +100,9 @@ From here you just need to check if the value matches your order's value.
 
 ```php
 <?php
+
+require 'vendor/autoload.php'; // Where your vendor directory is
+
 use CryptAPI\CryptAPI;
 
 $ca = new Cryptapi($coin, $my_address, $callback_url, $parameters);
