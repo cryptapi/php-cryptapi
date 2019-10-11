@@ -26,5 +26,6 @@
     "psr-4": {
       "CryptAPI\\": "cryptapi/"
     }
-  }
+  },
+  "version": "1.0"
 }
