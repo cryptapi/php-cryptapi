@@ -28,9 +28,7 @@ composer require cryptapi/php-cryptapi
 <?php
 require 'vendor/autoload.php'; // Where your vendor directory is
 
-use CryptAPI\CryptAPI;
-
-$ca = new Cryptapi($coin, $my_address, $callback_url, $parameters, $pending);
+$ca = new CryptAPI\CryptAPI($coin, $my_address, $callback_url, $parameters, $pending);
 $payment_address = $ca->get_address();
 ```
 
@@ -58,9 +56,7 @@ The URL you provided earlier will be called when a user pays, for easier process
 
 require 'vendor/autoload.php'; // Where your vendor directory is
 
-use CryptAPI\CryptAPI;
-
-$payment_data = Cryptapi::process_callback($_GET, $convert);
+$payment_data = CryptAPI\CryptAPI::process_callback($_GET, $convert);
 ```
 
 Where:
@@ -103,9 +99,7 @@ From here you just need to check if the value matches your order's value.
 
 require 'vendor/autoload.php'; // Where your vendor directory is
 
-use CryptAPI\CryptAPI;
-
-$ca = new Cryptapi($coin, $my_address, $callback_url, $parameters);
+$ca = new CryptAPI\CryptAPI($coin, $my_address, $callback_url, $parameters);
 $data = $ca->check_logs();
 ```
 
