@@ -5,7 +5,7 @@ Official PHP library of CryptAPI
 
 ```
 PHP >= 5.5
-PHP Curl
+ext-curl
 ```
 
 
