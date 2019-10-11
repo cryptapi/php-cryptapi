@@ -14,7 +14,7 @@ ext-curl
 
 
 ```
-composer require cryptapi/php-cryptapi
+composer require cryptapi/php-cryptapi:1.0.1
 ```
 
 [on GitHub](https://github.com/cryptapi/php-cryptapi) &emsp;

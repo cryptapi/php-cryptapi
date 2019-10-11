@@ -20,12 +20,13 @@
   },
   "require": {
     "php": ">=5.5.0",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {
       "CryptAPI\\": "cryptapi/"
     }
   },
-  "version": "1.0"
+  "version": "1.0.1"
 }

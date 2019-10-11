@@ -40,13 +40,16 @@ class CryptAPI {
 
         if (empty($this->own_address) || empty($this->coin) || empty($this->callback_url)) return null;
 
+        $req_parameters = http_build_query($this->parameters);
+        $callback_url = "{$this->callback_url}?{$req_parameters}";
+
         $ca_params = [
-            'callback' => $this->callback_url,
+            'callback' => $callback_url,
             'address' => $this->own_address,
             'pending' => $this->pending,
         ];
 
-        $response = $this->_request('create', array_merge($ca_params, $this->parameters));
+        $response = $this->_request('create', $ca_params);
 
         if ($response->status == 'success') {
             return $response->address_in;
