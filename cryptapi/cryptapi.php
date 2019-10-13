@@ -40,8 +40,11 @@ class CryptAPI {
 
         if (empty($this->own_address) || empty($this->coin) || empty($this->callback_url)) return null;
 
-        $req_parameters = http_build_query($this->parameters);
-        $callback_url = "{$this->callback_url}?{$req_parameters}";
+        $callback_url = $this->callback_url;
+        if (!empty($this->parameters)) {
+            $req_parameters = http_build_query($this->parameters);
+            $callback_url = "{$this->callback_url}?{$req_parameters}";
+        }
 
         $ca_params = [
             'callback' => $callback_url,
