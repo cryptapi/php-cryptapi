@@ -4,7 +4,7 @@ namespace CryptAPI;
 use Exception;
 
 class CryptAPI {
-    private $base_url = "https://cryptapi.io/api";
+    private static $base_url = "https://cryptapi.io/api";
     private $valid_coins = ['btc', 'bch', 'eth', 'ltc', 'xmr', 'iota'];
     private $own_address = null;
     private $callback_url = null;
@@ -52,7 +52,7 @@ class CryptAPI {
             'pending' => $this->pending,
         ];
 
-        $response = $this->_request('create', $ca_params);
+        $response = CryptAPI::_request($this->coin, 'create', $ca_params);
 
         if ($response->status == 'success') {
             return $response->address_in;
@@ -69,7 +69,17 @@ class CryptAPI {
             'callback' => $this->callback_url,
         ];
 
-        $response = $this->_request('logs', $params);
+        $response = CryptAPI::_request($this->coin, 'logs', $params);
+
+        if ($response->status == 'success') {
+            return $response;
+        }
+
+        return null;
+    }
+
+    public static function get_info($coin) {
+        $response = CryptAPI::_request($coin, 'info');
 
         if ($response->status == 'success') {
             return $response;
@@ -90,7 +100,7 @@ class CryptAPI {
             'coin' => $_get['coin'],
             'pending' => isset($_get['pending']) ? $_get['pending'] : false,
         ];
-        
+
         foreach ($_get as $k => $v) {
             if (isset($params[$k])) continue;
             $params[$k] = $_get[$k];
@@ -103,10 +113,15 @@ class CryptAPI {
         return $val / Cryptapi::$COIN_MULTIPLIERS[$coin];
     }
 
-    private function _request($endpoint, $params) {
+    private static function _request($coin, $endpoint, $params=[]) {
 
-        $data = http_build_query($params);
-        $url = "{$this->base_url}/{$this->coin}/{$endpoint}/?{$data}";
+        $base_url = Cryptapi::$base_url;
+
+        if (!empty($params)) $data = http_build_query($params);
+
+        $url = "{$base_url}/{$coin}/{$endpoint}/";
+
+        if (!empty($data)) $url .= "?{$data}";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
