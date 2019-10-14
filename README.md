@@ -1,3 +1,5 @@
+![CryptAPI](https://i.imgur.com/IfMAa7E.png)
+
 # CryptAPI's PHP Library
 Official PHP library of CryptAPI
 
