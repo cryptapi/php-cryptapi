@@ -6,7 +6,7 @@ Official PHP library of CryptAPI
 ## Requirements:
 
 ```
-PHP >= 5.5
+PHP >= 5.6
 ext-curl
 ```
 
@@ -30,21 +30,21 @@ composer require cryptapi/php-cryptapi
 <?php
 require 'vendor/autoload.php'; // Where your vendor directory is
 
-$ca = new CryptAPI\CryptAPI($coin, $my_address, $callback_url, $parameters, $pending);
+$ca = new CryptAPI\CryptAPI($coin, $my_address, $callback_url, $parameters, $cryptapi_params);
 $payment_address = $ca->get_address();
 ```
 
 Where:
 
-``$coin`` is the coin you wish to use, can be one of: ``['btc', 'eth', 'bch', 'ltc', 'iota', 'xmr']``  
+``$coin`` is the coin you wish to use, from CryptAPI's supported currencies (e.g `'btc', 'eth', 'erc20_usdt', ...`)
 
 ``$my_address`` is your own crypto address, where your funds will be sent to  
 
 ``$callback_url`` is the URL that will be called upon payment
 
-``$parameters`` is any parameter you wish to send to identify the payment, such as ``['order_id' => 1234]``
+``$parameters`` is any parameter you wish to send to identify the payment, such as `['order_id' => 1234]`
 
-``$pending`` if you want to be notified of pending transactions.
+``$cryptapi_params`` parameters that will be passed to CryptAPI _(check which extra parameters are available here: https://cryptapi.io/docs/#/Bitcoin/btccreate)_
 
 ``$payment_address`` is the newly generated address, that you will show your users
 
@@ -58,14 +58,8 @@ The URL you provided earlier will be called when a user pays, for easier process
 
 require 'vendor/autoload.php'; // Where your vendor directory is
 
-$payment_data = CryptAPI\CryptAPI::process_callback($_GET, $convert);
+$payment_data = CryptAPI\CryptAPI::process_callback($_GET);
 ```
-
-Where:
-
-`$convert` is a boolean to whether to convert to the main coin denomination.
-
-&nbsp;
 
 The `$payment_data` will be an array with the following keys:
 
@@ -81,9 +75,13 @@ The `$payment_data` will be an array with the following keys:
 
 `value` - the value that your customer paid
 
+`value_coin` - the value that your customer paid, in the main coin denomination (e.g `BTC`)
+
 `value_forwarded` - the value we forwarded to you, after our fee
 
-`coin` - the coin the payment was made in, one of: ``['btc', 'eth', 'bch', 'ltc', 'iota', 'xmr']``
+`value_forwarded_coin` - the value we forwarded to you, after our fee, in the main coin denomination (e.g `BTC`)
+
+`coin` - the coin the payment was made in (e.g: `'btc', 'eth', 'erc20_usdt', ...`)
 
 `pending` - whether the transaction is pending, if `false` means it's confirmed
 

@@ -5,23 +5,28 @@ use Exception;
 
 class CryptAPI {
     private static $base_url = "https://cryptapi.io/api";
-    private $valid_coins = ['btc', 'bch', 'eth', 'ltc', 'xmr', 'iota'];
+    private $valid_tokens = ['becaz', 'bnb', 'busd', 'cro', 'link', 'mkr', 'nexo', 'pax', 'tusd', 'usdc', 'usdt', ];
+    private $valid_coins = ['btc', 'bch', 'eth', 'ltc', 'xmr', 'iota', ];
     private $own_address = null;
     private $callback_url = null;
     private $coin = null;
-    private $pending = false;
+    private $ca_params = [];
     private $parameters = [];
 
     public static $COIN_MULTIPLIERS = [
-        'btc' => 100000000,
-        'bch' => 100000000,
-        'ltc' => 100000000,
-        'eth' => 1000000000000000000,
-        'iota' => 1000000,
-        'xmr' => 1000000000000,
+        'btc' => 10**8,
+        'bch' => 10**8,
+        'ltc' => 10**8,
+        'eth' => 10**18,
+        'iota' => 10**6,
+        'xmr' => 10**12,
     ];
 
-    public function __construct($coin, $own_address, $callback_url, $parameters=[], $pending=false) {
+    public function __construct($coin, $own_address, $callback_url, $parameters=[], $ca_params=[]) {
+
+        foreach ($this->valid_tokens as $token) {
+            $this->valid_coins[] = 'erc20_' . $token;
+        }
 
         if (!in_array($coin, $this->valid_coins)) {
             $vc = print_r($this->valid_coins, true);
@@ -31,7 +36,7 @@ class CryptAPI {
         $this->own_address = $own_address;
         $this->callback_url = $callback_url;
         $this->coin = $coin;
-        $this->pending = $pending ? 1 : 0;
+        $this->ca_params = $ca_params;
         $this->parameters = $parameters;
 
     }
@@ -46,11 +51,10 @@ class CryptAPI {
             $callback_url = "{$this->callback_url}?{$req_parameters}";
         }
 
-        $ca_params = [
+        $ca_params = array_merge([
             'callback' => $callback_url,
             'address' => $this->own_address,
-            'pending' => $this->pending,
-        ];
+        ], $this->ca_params);
 
         $response = CryptAPI::_request($this->coin, 'create', $ca_params);
 
@@ -88,15 +92,17 @@ class CryptAPI {
         return null;
     }
 
-    public static function process_callback($_get, $convert=false) {
+    public static function process_callback($_get) {
         $params = [
             'address_in' => $_get['address_in'],
             'address_out' => $_get['address_out'],
             'txid_in' => $_get['txid_in'],
             'txid_out' => isset($_get['txid_out']) ? $_get['txid_out'] : null,
             'confirmations' => $_get['confirmations'],
-            'value' => $convert ? Cryptapi::convert($_get['value'], $_get['coin']) : $_get['value'],
-            'value_forwarded' => isset($_get['value_forwarded']) ? ($convert ? Cryptapi::convert($_get['value_forwarded'], $_get['coin']) : $_get['value_forwarded']) : null,
+            'value' => $_get['value'],
+            'value_coin' => $_get['value_coin'],
+            'value_forwarded' => isset($_get['value_forwarded']) ? $_get['value_forwarded'] : null,
+            'value_forwarded_coin' => isset($_get['value_forwarded_coin']) ? $_get['value_forwarded_coin'] : null,
             'coin' => $_get['coin'],
             'pending' => isset($_get['pending']) ? $_get['pending'] : false,
         ];
@@ -109,13 +115,10 @@ class CryptAPI {
         return $params;
     }
 
-    public static function convert($val, $coin) {
-        return $val / Cryptapi::$COIN_MULTIPLIERS[$coin];
-    }
-
     private static function _request($coin, $endpoint, $params=[]) {
 
         $base_url = Cryptapi::$base_url;
+        $coin = str_replace('_', '/', $coin);
 
         if (!empty($params)) $data = http_build_query($params);
 

@@ -8,18 +8,18 @@
   "authors": [
     {
       "name": "CryptAPI",
-      "email": "cryptapi@protonmail.com",
+      "email": "info@cryptapi.io",
       "homepage": "https://cryptapi.io",
       "role": "Developer"
     }
   ],
   "support": {
-    "email": "cryptapi@protonmail.com",
+    "email": "info@cryptapi.io",
     "chat": "https://cryptapi.io",
     "docs": "https://cryptapi.io/docs/"
   },
   "require": {
-    "php": ">=5.5.0",
+    "php": ">=5.6.0",
     "ext-curl": "*",
     "ext-json": "*"
   },
@@ -28,5 +28,5 @@
       "CryptAPI\\": "cryptapi/"
     }
   },
-  "version": "1.1.0"
+  "version": "1.2.0"
 }
