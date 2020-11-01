@@ -4,7 +4,7 @@ namespace CryptAPI;
 use Exception;
 
 class CryptAPI {
-    private static $base_url = "https://cryptapi.io/api";
+    private static $base_url = "https://api.cryptapi.io";
     private $valid_tokens = ['becaz', 'bnb', 'busd', 'cro', 'link', 'mkr', 'nexo', 'pax', 'tusd', 'usdc', 'usdt', ];
     private $valid_coins = ['btc', 'bch', 'eth', 'ltc', 'xmr', 'iota', ];
     private $own_address = null;
