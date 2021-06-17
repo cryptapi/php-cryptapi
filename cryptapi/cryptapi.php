@@ -5,8 +5,9 @@ use Exception;
 
 class CryptAPI {
     private static $base_url = "https://api.cryptapi.io";
-    private $valid_tokens = ['becaz', 'bnb', 'busd', 'cro', 'link', 'mkr', 'nexo', 'pax', 'tusd', 'usdc', 'usdt', ];
-    private $valid_coins = ['btc', 'bch', 'eth', 'ltc', 'xmr', 'iota', ];
+    private $valid_erc20_tokens = ['becaz', 'bnb', 'busd', 'cro', 'link', 'mkr', 'nexo', 'pax', 'tusd', 'usdc', 'usdt', ];
+    private $valid_trc20_tokens = ['usdt', 'btc', 'eth', ];
+    private $valid_coins = ['btc', 'bch', 'eth', 'ltc', 'xmr', 'iota', 'trx', ];
     private $own_address = null;
     private $callback_url = null;
     private $coin = null;
@@ -20,12 +21,17 @@ class CryptAPI {
         'eth' => 10**18,
         'iota' => 10**6,
         'xmr' => 10**12,
+        'trx' => 10**6,
     ];
 
     public function __construct($coin, $own_address, $callback_url, $parameters=[], $ca_params=[]) {
 
-        foreach ($this->valid_tokens as $token) {
+        foreach ($this->valid_erc20_tokens as $token) {
             $this->valid_coins[] = 'erc20_' . $token;
+        }
+
+        foreach ($this->valid_trc20_tokens as $token) {
+            $this->valid_coins[] = 'trc20_' . $token;
         }
 
         if (!in_array($coin, $this->valid_coins)) {
