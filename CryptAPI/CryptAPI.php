@@ -97,7 +97,24 @@ class CryptAPI {
 
         return null;
     }
-    
+        
+    public static function get_qrcode($coin, $address, $value = false, $size = false) {
+        $params = [
+            'address' => $address,
+        ];
+
+        if ($value) $params['value'] = $value;
+        if ($size) $params['size'] = $size;
+
+        $response = CryptAPI::_request($coin, 'qrcode', $params);
+
+        if ($response->status == 'success') {
+            return $response;
+        }
+
+        return null;
+    }
+
     public static function get_estimate($coin, $addresses = 1, $priority = 'default') {
         $response = CryptAPI::_request($coin, 'estimate', [
             'addresses' => $addresses,
