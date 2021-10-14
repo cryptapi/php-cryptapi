@@ -91,6 +91,32 @@ class CryptAPI {
 
         return null;
     }
+    
+    public static function get_estimate($coin, $addresses = 1, $priority = 'default') {
+        $response = CryptAPI::_request($coin, 'estimate', [
+            'addresses' => $addresses,
+            'priority' => $priority
+        ]);
+
+        if ($response->status == 'success') {
+            return $response;
+        }
+
+        return null;
+    }
+    
+    public static function get_convert($coin, $value, $from) {
+        $response = CryptAPI::_request($coin, 'convert', [
+            'value' => $value,
+            'from' => $from
+        ]);
+
+        if ($response->status == 'success') {
+            return $response;
+        }
+
+        return null;
+    }
 
     public static function process_callback($_get) {
         $params = [
