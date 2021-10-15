@@ -106,6 +106,81 @@ $data = $ca->check_logs();
 Same parameters as before, the `$data` returned can be checked here: https://cryptapi.io/docs/#/Bitcoin/btclogs
 
 
+### Generating a QR code
+
+```php
+<?php
+require 'vendor/autoload.php'; // Where your vendor directory is
+
+$ca = new CryptAPI\CryptAPI($coin, $my_address, $callback_url, $parameters, $cryptapi_params);
+$payment_address = $ca->get_address();
+
+$qrcode = $ca->get_qrcode($value, $size);
+```
+
+For object creation, same parameters as before.  You must first call `get_address` as this method requires the payment address to have been created.
+
+For QR code generation:
+
+``$value`` Value to request the user, in the main coin (BTC, ETH, etc).  Optional, pass `false` to not add a value to the QR.
+
+``$size`` Size of the QR Code image in pixels. Optional, pass `false` to use the default size of 512.
+
+Response is an object with `qr_code` (base64 encoded image data) and `payment_uri` (the value encoded in the QR), see https://cryptapi.io/docs/#operation/btcqrcode for more information.
+
+
+### Estimating transaction fees
+
+```php
+<?php
+require 'vendor/autoload.php'; // Where your vendor directory is
+
+$fees = CryptAPI\CryptAPI::get_estimate($coin, $addresses, $priority);
+```
+
+Where:
+
+``$coin`` is the coin you wish to check, from CryptAPI's supported currencies (e.g `'btc', 'eth', 'erc20_usdt', ...`)
+
+``$addresses`` The number of addresses to forward the funds to.  Optional, defaults to 1.
+
+``$priority`` Confirmation priority, needs to be one of `['fast', 'default', 'economic']`.  Optional, defaults to `default`.
+
+Response is an object with `estimated_cost` and `estimated_cost_usd`, see https://cryptapi.io/docs/#operation/btcestimate for more information.
+
+
+### Converting between coins and fiat
+
+```php
+<?php
+require 'vendor/autoload.php'; // Where your vendor directory is
+
+$conversion = CryptAPI\CryptAPI::get_convert($coin, $value, $from);
+```
+
+Where:
+
+``$coin`` the target currency to convert to, from CryptAPI's supported currencies (e.g `'btc', 'eth', 'erc20_usdt', ...`)
+
+``$value`` Value to convert in `from`.
+
+``$from`` Currency to convert from, FIAT or crypto.
+
+Response is an object with `value_coin` and `exchange_rate`, see https://cryptapi.io/docs/#operation/btcconvert for more information.
+
+
+### Getting supported coins
+
+```php
+<?php
+require 'vendor/autoload.php'; // Where your vendor directory is
+
+$coins = CryptAPI\CryptAPI::get_supported_coins();
+```
+
+Response is an array with all support coins.
+
+
 ## Help
 
 Need help?  
