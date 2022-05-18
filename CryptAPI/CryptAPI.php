@@ -82,6 +82,7 @@ class CryptAPI {
         $response = CryptAPI::_request($this->coin, 'create', $ca_params);
 
         if ($response->status == 'success') {
+            assert($response->address_out == $this->own_address, 'Output address mismatch');
             $this->payment_address = $response->address_in;
             return $response->address_in;
         }
@@ -92,8 +93,14 @@ class CryptAPI {
     public function check_logs() {
         if (empty($this->coin) || empty($this->callback_url)) return null;
 
+        $callback_url = $this->callback_url;
+        if (!empty($this->parameters)) {
+            $req_parameters = http_build_query($this->parameters);
+            $callback_url = "{$this->callback_url}?{$req_parameters}";
+        }
+
         $params = [
-            'callback' => $this->callback_url,
+            'callback' => $callback_url,
         ];
 
         $response = CryptAPI::_request($this->coin, 'logs', $params);
