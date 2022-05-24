@@ -2,7 +2,7 @@
   "name": "cryptapi/php-cryptapi",
   "type": "library",
   "description": "CryptAPI's PHP library",
-  "keywords": ["cryptapi", "crypto", "bitcoin", "litecoin", "ethereum", "bitcoin cash", "monero", "iota", "payments", "cryptocurrencies"],
+  "keywords": ["cryptapi", "crypto", "bitcoin", "litecoin", "ethereum", "bitcoin cash", "monero", "iota", "payments", "cryptocurrencies", "cryptapi pro"],
   "homepage": "https://github.com/cryptapi/php-cryptapi",
   "license": "MIT",
   "authors": [
@@ -28,5 +28,5 @@
       "CryptAPI\\": "CryptAPI/"
     }
   },
-  "version": "1.5.0"
+  "version": "1.6.0"
 }
