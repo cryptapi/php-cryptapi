@@ -95,7 +95,7 @@ class CryptAPI {
         $response = CryptAPI::_request($this->coin, 'create', $ca_params);
 
         if ($response->status == 'success') {
-            assert($response->address_out == $this->own_address, 'Output address mismatch');
+            // assert($response->address_out == $this->own_address, 'Output address mismatch');
             $this->payment_address = $response->address_in;
             return $response->address_in;
         }
