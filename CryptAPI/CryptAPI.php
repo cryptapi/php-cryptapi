@@ -5,6 +5,7 @@ use Exception;
 
 class CryptAPI {
     private static $base_url = "https://api.cryptapi.io";
+    private static $pro_url = "https://pro-api.cryptapi.io";
     private $valid_coins = [];
     private $own_address = null;
     private $payment_address = null;
@@ -12,6 +13,7 @@ class CryptAPI {
     private $coin = null;
     private $ca_params = [];
     private $parameters = [];
+    private $api_key = null;
 
     public static $COIN_MULTIPLIERS = [
         'btc' => 10**8,
@@ -23,7 +25,7 @@ class CryptAPI {
         'trx' => 10**6,
     ];
 
-    public function __construct($coin, $own_address, $callback_url, $parameters=[], $ca_params=[]) {
+    public function __construct($coin, $own_address, $callback_url, $parameters=[], $ca_params=[], $api_key=null) {
         $this->valid_coins = CryptAPI::get_supported_coins();
 
         if (!in_array($coin, $this->valid_coins)) {
@@ -36,6 +38,7 @@ class CryptAPI {
         $this->coin = $coin;
         $this->ca_params = $ca_params;
         $this->parameters = $parameters;
+        $this->api_key = $api_key;
     }
 
     public static function get_supported_coins() {
@@ -68,21 +71,31 @@ class CryptAPI {
     public function get_address() {
         if (empty($this->own_address) || empty($this->coin) || empty($this->callback_url)) return null;
 
+        $api_key = $this->api_key;
+
         $callback_url = $this->callback_url;
         if (!empty($this->parameters)) {
             $req_parameters = http_build_query($this->parameters);
             $callback_url = "{$this->callback_url}?{$req_parameters}";
         }
 
-        $ca_params = array_merge([
-            'callback' => $callback_url,
-            'address' => $this->own_address,
-        ], $this->ca_params);
+        if (empty($api_key)) {
+            $ca_params = array_merge([
+                'callback' => $callback_url,
+                'address' => $this->own_address,
+            ], $this->ca_params);
+        } else {
+            $ca_params = array_merge([
+                'apikey' => $api_key,
+                'callback' => $callback_url,
+                'address' => $this->own_address,
+            ], $this->ca_params);
+        }
 
         $response = CryptAPI::_request($this->coin, 'create', $ca_params);
 
         if ($response->status == 'success') {
-            assert($response->address_out == $this->own_address, 'Output address mismatch');
+            // assert($response->address_out == $this->own_address, 'Output address mismatch');
             $this->payment_address = $response->address_in;
             return $response->address_in;
         }
@@ -199,6 +212,10 @@ class CryptAPI {
     private static function _request($coin, $endpoint, $params = [], $assoc = false) {
         $base_url = Cryptapi::$base_url;
         $coin = str_replace('_', '/', $coin);
+
+        if (!empty($params['apikey']) && $endpoint !== 'info') {
+            $base_url = CryptAPI::$pro_url;
+        }
 
         if (!empty($params)) $data = http_build_query($params);
 

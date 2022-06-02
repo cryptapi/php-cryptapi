@@ -30,7 +30,7 @@ composer require cryptapi/php-cryptapi
 <?php
 require 'vendor/autoload.php'; // Where your vendor directory is
 
-$ca = new CryptAPI\CryptAPI($coin, $my_address, $callback_url, $parameters, $cryptapi_params);
+$ca = new CryptAPI\CryptAPI($coin, $my_address, $callback_url, $parameters, $cryptapi_params, $api_key);
 $payment_address = $ca->get_address();
 ```
 
@@ -47,6 +47,8 @@ Where:
 ``$cryptapi_params`` parameters that will be passed to CryptAPI _(check which extra parameters are available here: https://cryptapi.io/docs/#/Bitcoin/btccreate)_
 
 ``$payment_address`` is the newly generated address, that you will show your users
+
+``$api_key`` is the API Key provided by [CryptAPI Pro](https://pro.cryptapi.io/). This field can be empty if you don't wish to use it.
 
 
 ### Getting notified when the user pays
