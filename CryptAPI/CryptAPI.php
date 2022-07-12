@@ -235,7 +235,7 @@ class CryptAPI
     private static function _request($coin, $endpoint, $params = [], $assoc = false)
     {
         $base_url = Cryptapi::$base_url;
-        $coin     = str_replace('_', '/', $coin);
+        $coin     = str_replace('_', '/', (string) $coin);
 
         if (!empty($params['apikey']) && $endpoint !== 'info') {
             $base_url = CryptAPI::$pro_url;
