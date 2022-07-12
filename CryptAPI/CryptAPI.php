@@ -1,31 +1,34 @@
 <?php
 
 namespace CryptAPI;
+
 use Exception;
 
-class CryptAPI {
-    private static $base_url = "https://api.cryptapi.io";
-    private static $pro_url = "https://pro-api.cryptapi.io";
-    private $valid_coins = [];
-    private $own_address = null;
+class CryptAPI
+{
+    private static $base_url = 'https://api.cryptapi.io';
+    private static $pro_url  = 'https://pro-api.cryptapi.io';
+    private $valid_coins     = [];
+    private $own_address     = null;
     private $payment_address = null;
-    private $callback_url = null;
-    private $coin = null;
-    private $ca_params = [];
-    private $parameters = [];
-    private $api_key = null;
+    private $callback_url    = null;
+    private $coin            = null;
+    private $ca_params       = [];
+    private $parameters      = [];
+    private $api_key         = null;
 
     public static $COIN_MULTIPLIERS = [
-        'btc' => 10**8,
-        'bch' => 10**8,
-        'ltc' => 10**8,
-        'eth' => 10**18,
-        'iota' => 10**6,
-        'xmr' => 10**12,
-        'trx' => 10**6,
+        'btc'  => 10 ** 8,
+        'bch'  => 10 ** 8,
+        'ltc'  => 10 ** 8,
+        'eth'  => 10 ** 18,
+        'iota' => 10 ** 6,
+        'xmr'  => 10 ** 12,
+        'trx'  => 10 ** 6,
     ];
 
-    public function __construct($coin, $own_address, $callback_url, $parameters=[], $ca_params=[], $api_key=null) {
+    public function __construct($coin, $own_address, $callback_url, $parameters = [], $ca_params = [], $api_key = null)
+    {
         $this->valid_coins = CryptAPI::get_supported_coins();
 
         if (!in_array($coin, $this->valid_coins)) {
@@ -33,15 +36,16 @@ class CryptAPI {
             throw new Exception("Unsupported Coin: {$coin}, Valid options are: {$vc}");
         }
 
-        $this->own_address = $own_address;
+        $this->own_address  = $own_address;
         $this->callback_url = $callback_url;
-        $this->coin = $coin;
-        $this->ca_params = $ca_params;
-        $this->parameters = $parameters;
-        $this->api_key = $api_key;
+        $this->coin         = $coin;
+        $this->ca_params    = $ca_params;
+        $this->parameters   = $parameters;
+        $this->api_key      = $api_key;
     }
 
-    public static function get_supported_coins() {
+    public static function get_supported_coins()
+    {
         $info = CryptAPI::get_info(null, true);
 
         if (empty($info)) {
@@ -49,7 +53,7 @@ class CryptAPI {
         }
 
         unset($info['fee_tiers']);
-    
+
         $coins = [];
 
         foreach ($info as $chain => $data) {
@@ -68,27 +72,30 @@ class CryptAPI {
         return $coins;
     }
 
-    public function get_address() {
-        if (empty($this->own_address) || empty($this->coin) || empty($this->callback_url)) return null;
+    public function get_address()
+    {
+        if (empty($this->own_address) || empty($this->coin) || empty($this->callback_url)) {
+            return null;
+        }
 
         $api_key = $this->api_key;
 
         $callback_url = $this->callback_url;
         if (!empty($this->parameters)) {
             $req_parameters = http_build_query($this->parameters);
-            $callback_url = "{$this->callback_url}?{$req_parameters}";
+            $callback_url   = "{$this->callback_url}?{$req_parameters}";
         }
 
         if (empty($api_key)) {
             $ca_params = array_merge([
                 'callback' => $callback_url,
-                'address' => $this->own_address,
+                'address'  => $this->own_address,
             ], $this->ca_params);
         } else {
             $ca_params = array_merge([
-                'apikey' => $api_key,
+                'apikey'   => $api_key,
                 'callback' => $callback_url,
-                'address' => $this->own_address,
+                'address'  => $this->own_address,
             ], $this->ca_params);
         }
 
@@ -103,13 +110,16 @@ class CryptAPI {
         return null;
     }
 
-    public function check_logs() {
-        if (empty($this->coin) || empty($this->callback_url)) return null;
+    public function check_logs()
+    {
+        if (empty($this->coin) || empty($this->callback_url)) {
+            return null;
+        }
 
         $callback_url = $this->callback_url;
         if (!empty($this->parameters)) {
             $req_parameters = http_build_query($this->parameters);
-            $callback_url = "{$this->callback_url}?{$req_parameters}";
+            $callback_url   = "{$this->callback_url}?{$req_parameters}";
         }
 
         $params = [
@@ -125,15 +135,22 @@ class CryptAPI {
         return null;
     }
 
-    public function get_qrcode($value = false, $size = false) {
-        if (empty($this->coin)) return null;
+    public function get_qrcode($value = false, $size = false)
+    {
+        if (empty($this->coin)) {
+            return null;
+        }
 
         $params = [
             'address' => $this->payment_address,
         ];
 
-        if ($value) $params['value'] = $value;
-        if ($size) $params['size'] = $size;
+        if ($value) {
+            $params['value'] = $value;
+        }
+        if ($size) {
+            $params['size'] = $size;
+        }
 
         $response = CryptAPI::_request($this->coin, 'qrcode', $params);
 
@@ -144,7 +161,8 @@ class CryptAPI {
         return null;
     }
 
-    public static function get_info($coin = null, $assoc = false) {
+    public static function get_info($coin = null, $assoc = false)
+    {
         $params = [];
 
         if (empty($coin)) {
@@ -160,10 +178,11 @@ class CryptAPI {
         return null;
     }
 
-    public static function get_estimate($coin, $addresses = 1, $priority = 'default') {
+    public static function get_estimate($coin, $addresses = 1, $priority = 'default')
+    {
         $response = CryptAPI::_request($coin, 'estimate', [
             'addresses' => $addresses,
-            'priority' => $priority
+            'priority'  => $priority
         ]);
 
         if ($response->status == 'success') {
@@ -172,11 +191,12 @@ class CryptAPI {
 
         return null;
     }
-    
-    public static function get_convert($coin, $value, $from) {
+
+    public static function get_convert($coin, $value, $from)
+    {
         $response = CryptAPI::_request($coin, 'convert', [
             'value' => $value,
-            'from' => $from
+            'from'  => $from
         ]);
 
         if ($response->status == 'success') {
@@ -186,51 +206,59 @@ class CryptAPI {
         return null;
     }
 
-    public static function process_callback($_get) {
+    public static function process_callback($_get)
+    {
         $params = [
-            'address_in' => $_get['address_in'],
-            'address_out' => $_get['address_out'],
-            'txid_in' => $_get['txid_in'],
-            'txid_out' => isset($_get['txid_out']) ? $_get['txid_out'] : null,
-            'confirmations' => $_get['confirmations'],
-            'value' => $_get['value'],
-            'value_coin' => $_get['value_coin'],
-            'value_forwarded' => isset($_get['value_forwarded']) ? $_get['value_forwarded'] : null,
+            'address_in'           => $_get['address_in'],
+            'address_out'          => $_get['address_out'],
+            'txid_in'              => $_get['txid_in'],
+            'txid_out'             => isset($_get['txid_out']) ? $_get['txid_out'] : null,
+            'confirmations'        => $_get['confirmations'],
+            'value'                => $_get['value'],
+            'value_coin'           => $_get['value_coin'],
+            'value_forwarded'      => isset($_get['value_forwarded']) ? $_get['value_forwarded'] : null,
             'value_forwarded_coin' => isset($_get['value_forwarded_coin']) ? $_get['value_forwarded_coin'] : null,
-            'coin' => $_get['coin'],
-            'pending' => isset($_get['pending']) ? $_get['pending'] : false,
+            'coin'                 => $_get['coin'],
+            'pending'              => isset($_get['pending']) ? $_get['pending'] : false,
         ];
 
         foreach ($_get as $k => $v) {
-            if (isset($params[$k])) continue;
+            if (isset($params[$k])) {
+                continue;
+            }
             $params[$k] = $_get[$k];
         }
 
         return $params;
     }
 
-    private static function _request($coin, $endpoint, $params = [], $assoc = false) {
+    private static function _request($coin, $endpoint, $params = [], $assoc = false)
+    {
         $base_url = Cryptapi::$base_url;
-        $coin = str_replace('_', '/', $coin);
+        $coin     = str_replace('_', '/', $coin);
 
         if (!empty($params['apikey']) && $endpoint !== 'info') {
             $base_url = CryptAPI::$pro_url;
         }
 
-        if (!empty($params)) $data = http_build_query($params);
+        if (!empty($params)) {
+            $data = http_build_query($params);
+        }
 
         if (!empty($coin)) {
             $coin = str_replace('_', '/', $coin);
-            $url = "{$base_url}/{$coin}/{$endpoint}/";
+            $url  = "{$base_url}/{$coin}/{$endpoint}/";
         } else {
-            $url = "{$base_url}/{$endpoint}/";
+            $url  = "{$base_url}/{$endpoint}/";
         }
 
-        if (!empty($data)) $url .= "?{$data}";
+        if (!empty($data)) {
+            $url .= "?{$data}";
+        }
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
         curl_close($ch);
 
