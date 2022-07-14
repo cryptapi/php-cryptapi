@@ -246,10 +246,9 @@ class CryptAPI
         }
 
         if (!empty($coin)) {
-            $coin = str_replace('_', '/', $coin);
-            $url  = "{$base_url}/{$coin}/{$endpoint}/";
+            $url = "{$base_url}/{$coin}/{$endpoint}/";
         } else {
-            $url  = "{$base_url}/{$endpoint}/";
+            $url = "{$base_url}/{$endpoint}/";
         }
 
         if (!empty($data)) {
