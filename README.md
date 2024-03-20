@@ -44,7 +44,7 @@ $payment_address = $ca->get_address();
 ``$my_address`` is your own crypto address, where your funds will be sent to
 ``$callback_url`` is the URL that will be called upon payment
 ``$parameters`` is any parameter you wish to send to identify the payment, such as `['order_id' => 1234]`
-``$cryptapi_params`` parameters that will be passed to CryptAPI _(check which extra parameters are available here: https://cryptapi.io/docs/#/Bitcoin/btccreate)_
+``$cryptapi_params`` parameters that will be passed to CryptAPI _(check which extra parameters are available here: https://docs.cryptapi.io/#operation/create)_
 ``$payment_address`` is the newly generated address, that you will show your users
 ``$api_key`` is the API Key provided by [BlockBee](https://blockbee.io/), since this library is also compatible with BlockBee API.
 
@@ -147,7 +147,7 @@ For object creation, same parameters as before.  You must first call `get_addres
 
 ``$size`` Size of the QR Code image in pixels. Optional, pass `false` to use the default size of 512.
 
-Response is an object with `qr_code` (base64 encoded image data) and `payment_uri` (the value encoded in the QR), see https://cryptapi.io/docs/#operation/btcqrcode for more information.
+Response is an object with `qr_code` (base64 encoded image data) and `payment_uri` (the value encoded in the QR), see https://docs.cryptapi.io/#operation/qrcode for more information.
 
 #### Response sample:
 
@@ -181,7 +181,7 @@ $fees = CryptAPI\CryptAPI::get_estimate($coin, $addresses, $priority);
 
 ``$priority`` Confirmation priority, needs to be one of `['fast', 'default', 'economic']`.  Optional, defaults to `default`.
 
-Response is an object with `estimated_cost` and `estimated_cost_usd`, see https://cryptapi.io/docs/#operation/btcestimate for more information.
+Response is an object with `estimated_cost` and `estimated_cost_usd`, see https://docs.cryptapi.io/#operation/estimate for more information.
 
 #### Response sample:
 
@@ -216,7 +216,7 @@ $conversion = CryptAPI\CryptAPI::get_convert($coin, $value, $from);
 
 ``$from`` Currency to convert from, FIAT or crypto.
 
-Response is an object with `value_coin` and `exchange_rate`, see https://docs.cryptapi.io/#operation/btcconvert for more information.
+Response is an object with `value_coin` and `exchange_rate`, see https://docs.cryptapi.io/#operation/convert for more information.
 
 #### Response sample:
 
