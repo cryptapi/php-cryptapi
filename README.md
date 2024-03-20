@@ -3,17 +3,20 @@
 # CryptAPI's PHP Library
 Official PHP library of CryptAPI
 
+## Table of Contents
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [API and utils](#api-and-utils)
+4. [Help](#help)
+
 ## Requirements:
 
 ```
-PHP >= 5.6
+PHP >= 7.2
 ext-curl
 ```
 
-
-
-## Install
-
+## Installation
 
 ```
 composer require cryptapi/php-cryptapi
@@ -22,7 +25,7 @@ composer require cryptapi/php-cryptapi
 [on GitHub](https://github.com/cryptapi/php-cryptapi) &emsp;
 [on Composer](https://packagist.org/packages/cryptapi/php-cryptapi)
 
-## Usage
+## API and utils
 
 ### Generating a new address
 
@@ -31,25 +34,26 @@ composer require cryptapi/php-cryptapi
 require 'vendor/autoload.php'; // Where your vendor directory is
 
 $ca = new CryptAPI\CryptAPI($coin, $my_address, $callback_url, $parameters, $cryptapi_params, $api_key);
+
 $payment_address = $ca->get_address();
 ```
 
-Where:
+#### Where:
 
 ``$coin`` is the coin you wish to use, from CryptAPI's supported currencies (e.g `'btc', 'eth', 'erc20_usdt', ...`)
-
-``$my_address`` is your own crypto address, where your funds will be sent to  
-
+``$my_address`` is your own crypto address, where your funds will be sent to
 ``$callback_url`` is the URL that will be called upon payment
-
 ``$parameters`` is any parameter you wish to send to identify the payment, such as `['order_id' => 1234]`
-
 ``$cryptapi_params`` parameters that will be passed to CryptAPI _(check which extra parameters are available here: https://cryptapi.io/docs/#/Bitcoin/btccreate)_
-
 ``$payment_address`` is the newly generated address, that you will show your users
+``$api_key`` is the API Key provided by [BlockBee](https://blockbee.io/), since this library is also compatible with BlockBee API.
 
-``$api_key`` is the API Key provided by [CryptAPI Pro](https://pro.cryptapi.io/). This field can be empty if you don't wish to use it.
+With `get_address()` you will be creating the **request** in our API using this endpoint: https://docs.cryptapi.io/#operation/create.
 
+#### Response sample:
+```
+0x0E945b1554c8029A6B9bE1F7A24ae75d2F44d8DB
+```
 
 ### Getting notified when the user pays
 
@@ -105,8 +109,23 @@ $ca = new CryptAPI\CryptAPI($coin, $my_address, $callback_url, $parameters);
 $data = $ca->check_logs();
 ```
 
-Same parameters as before, the `$data` returned can be checked here: https://cryptapi.io/docs/#/Bitcoin/btclogs
+All the `data` returned in the response can be checked here: https://docs.cryptapi.io/#operation/logs
 
+#### Response sample:
+
+```php
+object(stdClass) {
+  ["status"]=>string(7) "success"
+  ["callback_url"]=>string(37) "https://example.com?payment_id=123112"
+  ["address_in"]=>string(42) "0x0E945b1554c8029A6B9bE1F7A24ae75d2F44d8DB"
+  ["address_out"]=>string(42) "0xA6B78B56ee062185E405a1DDDD18cE8fcBC4395d"
+  ["notify_pending"]=>bool(true)
+  ["notify_confirmations"]=>int(1)
+  ["priority"]=>string(7) "default"
+  ["callbacks"]=>array(0) {
+  }
+}
+```
 
 ### Generating a QR code
 
@@ -122,7 +141,7 @@ $qrcode = $ca->get_qrcode($value, $size);
 
 For object creation, same parameters as before.  You must first call `get_address` as this method requires the payment address to have been created.
 
-For QR code generation:
+#### Where:
 
 ``$value`` Value to request the user, in the main coin (BTC, ETH, etc).  Optional, pass `false` to not add a value to the QR.
 
@@ -130,6 +149,20 @@ For QR code generation:
 
 Response is an object with `qr_code` (base64 encoded image data) and `payment_uri` (the value encoded in the QR), see https://cryptapi.io/docs/#operation/btcqrcode for more information.
 
+#### Response sample:
+
+```php
+object(stdClass) {
+  ["status"]=>string(7) "success"
+  ["qr_code"]=>string(18700) "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"
+  ["payment_uri"]=>string(42) "0x0E945b1554c8029A6B9bE1F7A24ae75d2F44d8DB"
+}
+```
+
+#### Usage
+```html
+<img src='data:image/png;base64,<?php echo $qrcode->qr_code; ?>'/>
+```
 
 ### Estimating transaction fees
 
@@ -140,7 +173,7 @@ require 'vendor/autoload.php'; // Where your vendor directory is
 $fees = CryptAPI\CryptAPI::get_estimate($coin, $addresses, $priority);
 ```
 
-Where:
+#### Where:
 
 ``$coin`` is the coin you wish to check, from CryptAPI's supported currencies (e.g `'btc', 'eth', 'erc20_usdt', ...`)
 
@@ -150,8 +183,23 @@ Where:
 
 Response is an object with `estimated_cost` and `estimated_cost_usd`, see https://cryptapi.io/docs/#operation/btcestimate for more information.
 
+#### Response sample:
 
-### Converting between coins and fiat
+```php
+object(stdClass) {
+  ["status"]=>string(7) "success"
+  ["estimated_cost"]=>string(11) "0.000496344"
+  ["estimated_cost_currency"]=>
+  object(stdClass) {
+    ["AED"]=>string(4) "1.12"
+    ["AUD"]=>string(4) "0.46"
+    ["BGN"]=>string(4) "0.55"
+    # ... remaining FIAT currencies
+  }
+}
+```
+
+### Converting between cryptocurrencies and FIAT
 
 ```php
 <?php
@@ -160,7 +208,7 @@ require 'vendor/autoload.php'; // Where your vendor directory is
 $conversion = CryptAPI\CryptAPI::get_convert($coin, $value, $from);
 ```
 
-Where:
+#### Where:
 
 ``$coin`` the target currency to convert to, from CryptAPI's supported currencies (e.g `'btc', 'eth', 'erc20_usdt', ...`)
 
@@ -168,8 +216,17 @@ Where:
 
 ``$from`` Currency to convert from, FIAT or crypto.
 
-Response is an object with `value_coin` and `exchange_rate`, see https://cryptapi.io/docs/#operation/btcconvert for more information.
+Response is an object with `value_coin` and `exchange_rate`, see https://docs.cryptapi.io/#operation/btcconvert for more information.
 
+#### Response sample:
+
+```php
+object(stdClass) {
+  ["status"]=>string(7) "success"
+  ["value_coin"]=>string(1) "3"
+  ["exchange_rate"]=>string(8) "0.999467"
+}
+```
 
 ### Getting supported coins
 
@@ -181,6 +238,22 @@ $coins = CryptAPI\CryptAPI::get_supported_coins();
 ```
 
 Response is an array with all support coins.
+
+
+#### Response sample:
+
+```php
+array(65) {
+  [0]=>string(3) "btc"
+  [1]=>string(3) "bch"
+  [2]=>string(3) "ltc"
+  [3]=>string(4) "doge"
+  [4]=>string(3) "xmr" # deprecated
+  [5]=>string(11) "bep20_1inch"
+  [6]=>string(9) "bep20_ada"
+  # ...remaining supported cryptocurrencies or tokens
+}
+```
 
 
 ## Help

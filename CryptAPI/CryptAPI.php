@@ -17,16 +17,6 @@ class CryptAPI
     private $parameters      = [];
     private $api_key         = null;
 
-    public static $COIN_MULTIPLIERS = [
-        'btc'  => 10 ** 8,
-        'bch'  => 10 ** 8,
-        'ltc'  => 10 ** 8,
-        'eth'  => 10 ** 18,
-        'iota' => 10 ** 6,
-        'xmr'  => 10 ** 12,
-        'trx'  => 10 ** 6,
-    ];
-
     public function __construct($coin, $own_address, $callback_url, $parameters = [], $ca_params = [], $api_key = null)
     {
         $this->valid_coins = CryptAPI::get_supported_coins();
@@ -102,7 +92,6 @@ class CryptAPI
         $response = CryptAPI::_request($this->coin, 'create', $ca_params);
 
         if ($response->status == 'success') {
-            // assert($response->address_out == $this->own_address, 'Output address mismatch');
             $this->payment_address = $response->address_in;
             return $response->address_in;
         }
@@ -141,8 +130,14 @@ class CryptAPI
             return null;
         }
 
+        $address = $this->payment_address;
+
+        if (empty($address)) {
+            $address = $this->get_address();
+        }
+
         $params = [
-            'address' => $this->payment_address,
+            'address' => $address,
         ];
 
         if ($value) {
