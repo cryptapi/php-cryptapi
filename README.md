@@ -259,4 +259,4 @@ array(65) {
 ## Help
 
 Need help?  
-Contact us @ https://cryptapi.io/contact/
+Contact us @ https://cryptapi.io/contacts/
