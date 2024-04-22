@@ -248,9 +248,8 @@ array(65) {
   [1]=>string(3) "bch"
   [2]=>string(3) "ltc"
   [3]=>string(4) "doge"
-  [4]=>string(3) "xmr" # deprecated
-  [5]=>string(11) "bep20_1inch"
-  [6]=>string(9) "bep20_ada"
+  [4]=>string(11) "bep20_1inch"
+  [5]=>string(9) "bep20_ada"
   # ...remaining supported cryptocurrencies or tokens
 }
 ```
