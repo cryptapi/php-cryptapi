@@ -37,6 +37,8 @@ class CryptAPI
 
         $this->valid_coins = CryptAPI::get_supported_coins();
 
+        $coin = str_replace('/', '_', (string) $coin);
+
         if (!in_array($coin, $this->valid_coins)) {
             $vc = print_r($this->valid_coins, true);
             throw new Exception("Unsupported Coin: {$coin}, Valid options are: {$vc}");
